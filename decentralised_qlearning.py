@@ -23,16 +23,16 @@ def is_best_reply(Qi, policy, delta_i):
 
     return np.all(policy_value >= opt_value - delta_i)
 
-def update_Qi(Qi, x_t, next_state, ui_t, cost_i, beta_i, alpha_i_n):
+def update_Qi(Qi, x_t, next_state, ui_t, reward_i, beta_i, alpha_i_n):
     """
-    updates agent i's Q-factor given the received cost and next state.
+    updates agent i's Q-factor given the received reward and next state.
 
     Args:
         Qi (np.ndarray): agent i's previous Q-factor.
         x_t (int): the state at time t.
         next_state (int): the state at time t+1.
         ui_t (int): the action taken at t.
-        cost_i (float): the cost received after (x_t, u_t).
+        reward_i (float): the reward received after (x_t, u_t).
         beta_i (float): the discount factor for agent i.
         alpha_i_n (float): the update/learning rate of agent i.
 
@@ -41,7 +41,7 @@ def update_Qi(Qi, x_t, next_state, ui_t, cost_i, beta_i, alpha_i_n):
     """
 
     Qi_new = np.copy(Qi)
-    Qi_new[x_t, ui_t] = (1-alpha_i_n) * Qi[x_t, ui_t] + alpha_i_n * (cost_i + beta_i*np.max(Qi[next_state, :]))
+    Qi_new[x_t, ui_t] = (1-alpha_i_n) * Qi[x_t, ui_t] + alpha_i_n * (reward_i + beta_i*np.max(Qi[next_state, :]))
     abs_delta = np.max(np.abs(Qi_new - Qi))
 
     return Qi_new, abs_delta
@@ -63,7 +63,7 @@ def policy_with_exploration(policy, state, n_U, rho):
         return policy[state]
 
 def evaluate_Qs(agent_policies, n_states, n_Us, init_state, transition_state,
-                cost_funcs, betas,  T, experimentation_probs, alpha_func):
+                reward_funcs, betas,  T, experimentation_probs, alpha_func):
     """evaluates Q-factors for each agent under the given stationary policies.
 
     Args:
@@ -72,7 +72,7 @@ def evaluate_Qs(agent_policies, n_states, n_Us, init_state, transition_state,
         n_Us (List): list of length of action spaces for each agent.
         init_state (int): the initial state.x
         transition_state (function): the state transition function: (state, agent_actions) -> next_state.
-        cost_funcs (List[function]): the cost funcction for each agent: (state, agent_actions) -> cost
+        reward_funcs (List[function]): the reward function for each agent: (state, agent_actions) -> reward
         betas (List[float]): list of discount factors for each agent.
         T (int): length of exploration phases.
         experimentation_probs (List[float]): list of experimentation probabilities for each agent.
@@ -100,8 +100,8 @@ def evaluate_Qs(agent_policies, n_states, n_Us, init_state, transition_state,
         actions_t = [policy_with_exploration(agent_policies[i], x_t, n_Us[i], experimentation_probs[i])
                      for i in range(n_agents)]
 
-        # receive costs for each agent
-        costs = [cost_funcs[i](x_t, actions_t) for i in range(n_agents)]
+        # receive rewards for each agent
+        rewards = [reward_funcs[i](x_t, actions_t) for i in range(n_agents)]
 
         # recive next state
         next_state = transition_state(x_t, actions_t)
@@ -116,12 +116,12 @@ def evaluate_Qs(agent_policies, n_states, n_Us, init_state, transition_state,
         for i in range(n_agents):
 
             ui_t = actions_t[i]
-            cost_i = costs[i]
+            reward_i = rewards[i]
             beta_i = betas[i]
 
             alpha_i_n = alpha_func(n_ts[i][x_t, ui_t])
 
-            Qs[i], Qi_change = update_Qi(Qs[i], x_t, next_state, ui_t, cost_i, beta_i, alpha_i_n)
+            Qs[i], Qi_change = update_Qi(Qs[i], x_t, next_state, ui_t, reward_i, beta_i, alpha_i_n)
             Q_change_t.append(Qi_change)
 
         # keep track of maximum change between Qi_t and Qi_t+1
@@ -135,7 +135,7 @@ def evaluate_Qs(agent_policies, n_states, n_Us, init_state, transition_state,
 
     return Qs, Q_changes
 
-def q_learning_alg1(n_Us, n_states, cost_funcs, betas,
+def q_learning_alg1(n_Us, n_states, reward_funcs, betas,
                     get_initial_state, transition_state,
                     n_exploration_phases, T, experimentation_probs,
                     alpha_func, deltas, inertias, early_stopping=False):
@@ -144,7 +144,7 @@ def q_learning_alg1(n_Us, n_states, cost_funcs, betas,
     Args:
         n_Us (List): list of length of action spaces for each agent.
         n_states (int): number of states.
-        cost_funcs (List[function]): the cost funcction for each agent: (state, agent_actions) -> cost
+        reward_funcs (List[function]): the reward funcction for each agent: (state, agent_actions) -> reward
         betas (List[float]): list of discount factors for each agent.
         get_initial_state (function): function which returns initial state.
         transition_state (function): the state transition function: (state, agent_actions) -> next_state.
@@ -183,7 +183,7 @@ def q_learning_alg1(n_Us, n_states, cost_funcs, betas,
 
         # evaluate current policies (stationary)
         Qs, _ = evaluate_Qs(agent_policies, n_states, n_Us, x_t, transition_state,
-                            cost_funcs, betas, T, experimentation_probs, alpha_func)
+                            reward_funcs, betas, T, experimentation_probs, alpha_func)
 
         Qs_history.append(Qs) # log current Q-factors
 
