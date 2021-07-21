@@ -8,7 +8,25 @@ from multi_agent_learning import evaluate_Qs, is_best_reply
 
 def learn_br_graph(n_agents, n_states, n_Us, init_state, transition_state, reward_funcs, betas,
                    T, experimentation_probs, alpha_func, deltas):
-    '''learn a game's best-reply graph'''
+    """learn a game's best-reply graph
+
+    Args:
+        n_agents (int): number of agents in game.
+        n_states (int): number of states in game.
+        n_Us (List[int]): list of number of actions available to each agent.
+        init_state (int): the initial state.
+        transition_state (function): the state transition function: (state, agent_actions) -> next_state.
+        reward_funcs (List[function]): the reward function for each agent: (state, agent_actions) -> reward.
+        betas (List[float]): list of discount factors for each agent.
+        T (int): length of learning phase.
+        experimentation_probs (List[float]): list of experimentation probabilities for each agent.
+        alpha_func (function): update/learning rate function.
+        deltas (List[float]): list of tolerance for suboptimality of each agent.
+
+    Returns:
+        networkx.DiGraph: br_graph
+    """
+
 
     # generate joint policy space
     agent_policy_spaces = [list(itertools.product(range(n_Us[i]), repeat=n_states)) for i in range(n_agents)]
@@ -44,7 +62,16 @@ def sub_agent_br_policy(joint_policy, agent_br_policy, agent_ind):
 
 
 def transition_matrix_from_br_graph(br_graph, agent_inertias, joint_policy_space):
-    '''calculates the Markov transition matrix from the best-reply graph'''
+    """calculates the Markov transition matrix of the best-reply process from the best-reply graph.
+
+    Args:
+        br_graph (networkx.DiGraph): best-reply graph of game.
+        agent_inertias (List[float]): list of inertias of each agent.
+        joint_policy_space (List[tuple]): the joint-agent policy space of the game.
+
+    Returns:
+        Tuple[np.ndarray, dict]: transition_matrix, jps_dict
+    """
 
     # dictionary to translate joint policy to its index in the joint policy space
     jps_dict = {joint_policy: ind for ind, joint_policy in enumerate(joint_policy_space)}
