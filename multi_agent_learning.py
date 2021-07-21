@@ -72,7 +72,7 @@ def evaluate_Qs(agent_policies, n_states, n_Us, init_state, transition_state,
         n_Us (List): list of length of action spaces for each agent.
         init_state (int): the initial state.x
         transition_state (function): the state transition function: (state, agent_actions) -> next_state.
-        reward_funcs (List[function]): the reward function for each agent: (state, agent_actions) -> reward
+        reward_funcs (List[function]): the reward function for each agent: (state, agent_actions) -> reward.
         betas (List[float]): list of discount factors for each agent.
         T (int): length of exploration phases.
         experimentation_probs (List[float]): list of experimentation probabilities for each agent.
@@ -148,12 +148,12 @@ def q_learning_alg1(n_Us, n_states, reward_funcs, betas,
         betas (List[float]): list of discount factors for each agent.
         get_initial_state (function): function which returns initial state.
         transition_state (function): the state transition function: (state, agent_actions) -> next_state.
-        n_exploration_phases (int): the number of exploration phases
+        n_exploration_phases (int): the number of exploration phases.
         T (int): length of exploration phases.
         experimentation_probs (List[float]): list of experimentation probabilities for each agent.
         alpha_func (function): update/learning rate function.
         deltas (List[float]): list of tolerance for suboptimality of each agent.
-        inertias (List[float]): list of inertias of each agent
+        inertias (List[float]): list of inertias of each agent.
         early_stopping (bool, optional): whether to stop when equilibrium is reached. Defaults to False.
 
     Returns:
