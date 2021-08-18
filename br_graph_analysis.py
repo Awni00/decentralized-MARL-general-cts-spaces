@@ -77,7 +77,7 @@ def transition_matrix_from_br_graph(br_graph, agent_inertias, joint_policy_space
     jps_dict = {joint_policy: ind for ind, joint_policy in enumerate(joint_policy_space)}
     n_jps = len(joint_policy_space) # size of joint policy space
 
-    transition_matrix = np.zeros(shape=(n_jps, n_jps))
+    transition_matrix = np.zeros(shape=(n_jps, n_jps), dtype=object)
 
     for jp_i in joint_policy_space:
         for jp_j in joint_policy_space:
