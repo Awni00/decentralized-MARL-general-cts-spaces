@@ -139,10 +139,12 @@ def q_learning_alg1(n_Us, n_states, reward_funcs, betas,
                     get_initial_state, transition_state,
                     n_exploration_phases, T, experimentation_probs,
                     alpha_func, deltas, inertias, early_stopping=False):
-    """Multi-agent Q-learning algorithm from [...].
+    """
+    An implementation of the decentralized multi-agent Q-learning algorithm
+    from "Decentralized Q-Learning for Stochastic Teams and Games" by Arslan and Yuksel.
 
     Args:
-        n_Us (List): list of length of action spaces for each agent.
+        n_Us (List): list of size of action spaces for each agent.
         n_states (int): number of states.
         reward_funcs (List[function]): the reward funcction for each agent: (state, agent_actions) -> reward
         betas (List[float]): list of discount factors for each agent.
