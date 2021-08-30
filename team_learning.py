@@ -103,3 +103,28 @@ def team_learning_alg(n_Us, n_states, reward_funcs, betas,
 
 
     return Qs, agent_policies, (policy_history, Qs_history, is_opt_history)
+
+# TODO: add these to implementation of original decentralized algorithm
+# TODO: think about structure of code. combine? split up differently?
+
+
+def update_policy(curr_policy, full_policy_space, br_policy_space, exp_prob, inertia):
+    '''returns a policy according to policy update in team learning algorithm'''
+
+    # experiment
+    if np.random.random() < exp_prob:
+        # return any policy from policy space uniformly at random
+        return full_policy_space[np.random.choice(len(full_policy_space))]
+    # best-reply process
+    else:
+        return best_reply_inertia(curr_policy, br_policy_space, inertia)
+
+def best_reply_inertia(curr_policy, br_policy_space, inertia):
+    '''choose next policy according to best-reply process with inertia'''
+
+    # stay inerta
+    if np.random.random() < inertia:
+        return curr_policy
+    else:
+        # choose best-reply uniformly at random from br_space
+        return br_policy_space[np.random.choice(len(br_policy_space))]
