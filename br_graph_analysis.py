@@ -19,7 +19,7 @@ def learn_br_graph(n_agents, n_states, n_Us, init_state, transition_state, rewar
         reward_funcs (List[function]): the reward function for each agent: (state, agent_actions) -> reward.
         betas (List[float]): list of discount factors for each agent.
         T (int): length of learning phase.
-        experimentation_probs (List[float]): list of experimentation probabilities for each agent.
+        experimentation_probs (List[float]): list of experimentation probabixlities for each agent.
         alpha_func (function): update/learning rate function.
         deltas (List[float]): list of tolerance for suboptimality of each agent.
 
