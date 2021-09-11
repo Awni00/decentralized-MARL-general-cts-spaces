@@ -1,6 +1,6 @@
 # Decentralized Multi-Agent Reinforcement Learning
 
-This repository studies and implements the many-agent reinforcement learning algorithms from the paper:
+This repository studies and implements the decentralized multi-agent reinforcement learning algorithms from the paper:
 >G. Arslan and S. Yüksel, **Decentralized Q-Learning for Stochastic Teams and Games**, *IEEE Trans. Automatic Control*, vol. 62, pp. 1545 - 1558, April 2017
 
 - `multi_agent_learning.py`: module implementing the multi-agent Q-learning algorithm.
