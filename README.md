@@ -1,7 +1,8 @@
-# Decentralized Multi-Agent Reinforcement Learning
+# Decentralized Multi-Agent Reinforcement Learning: Convergence to Team-Optimality
 
-This repository studies and implements the decentralized multi-agent reinforcement learning algorithms from the paper:
->G. Arslan and S. Yüksel, **Decentralized Q-Learning for Stochastic Teams and Games**, *IEEE Trans. Automatic Control*, vol. 62, pp. 1545 - 1558, April 2017
+This repository contains code associated with this [paper](https://www.awni.xyz/files/marl_report.pdf) studying the convergence of a decentralized multi-agent reinforcement learning algorithm to team-optimality.
+
+The repository includes the following:
 
 - `multi_agent_learning.py`: module implementing the multi-agent Q-learning algorithm.
 
@@ -11,4 +12,4 @@ This repository studies and implements the decentralized multi-agent reinforceme
 
 - `sim_utils.py`: module containing some basic utility functions for running simulations.
 
-- look at the `notebooks` folder for examples using these modules (the notebooks are varied in content; at the moment this is just a dump of various experiments that are part of a research project).
+- look at the `notebooks` folder for examples using these modules (the notebooks are varied in content; at the moment this is just a dump of various experiments that are part of the research project).
