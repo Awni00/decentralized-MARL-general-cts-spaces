@@ -163,6 +163,7 @@ def quantized_q_learning_alg(
     deltas,
     inertias,
     early_stopping=False,
+    verbose=False,
 ):
     """
     Runs Quantized Continuous-Space Decentralized Multi-Agent Reinforcement Learning Algorithm.
@@ -226,7 +227,7 @@ def quantized_q_learning_alg(
         policy_history.append(
             np.copy(
                 [
-                    quantized_agent_policy.index_policy
+                    quantized_agent_policy.get_policy_map()
                     for quantized_agent_policy in quantized_agent_policies
                 ]
             )
@@ -246,7 +247,12 @@ def quantized_q_learning_alg(
         Qs_history.append(Qs)  # log current Q-factors
 
         is_BR_k = []
+        if verbose:
+            print(f"reached end of exploration phase {k}")
         for i in range(n_agents):
+            if verbose:
+                print(f"agent {i}'s policy: {quantized_agent_policies[i].get_policy_map()}")
+
             # calculate estimate of best-reply policy space
             full_quantized_policy_space_i = itertools.product(
                 range(action_quantizers[i].n_bins), repeat=state_quantizers[i].n_bins
@@ -259,6 +265,8 @@ def quantized_q_learning_alg(
 
             # if agent i's policy is not a best reply, replace it with a best reply
             if quantized_agent_policies[i].index_policy not in br_policy_space_i:
+                if verbose:
+                    print("policy is not best-reply.")
 
                 # with inertia, don't replace policy even if it's not a best reply
                 if np.random.random() < 1 - inertias[i]:
@@ -267,10 +275,25 @@ def quantized_q_learning_alg(
                     ]
                     quantized_agent_policies[i].update_index_policy(updated_policy)
 
+                    if verbose:
+                        print(
+                            f"updating to {quantized_agent_policies[i].get_policy_map()}"
+                        )
+
+                else:
+                    if verbose:
+                        print("inertia activated. not updating.")
                 # log whether agent i's policy is a best reply
                 is_BR_k.append(False)
             else:
                 is_BR_k.append(True)
+                if verbose:
+                    print("policy is best-reply.")
+
+            if verbose:
+                print()
+        if verbose:
+            print()
 
         is_BR_history.append(is_BR_k)
 
