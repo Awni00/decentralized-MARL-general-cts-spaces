@@ -50,7 +50,7 @@ def evaluate_Qs_quantized(
 
     Returns:
         Tuple[List[ndarray], List[float]]:
-            Qs (estimated Q-factor for each agent), Q_changes (maximal change between succesive Q-learning steps)
+            Qs (estimated Q-factor for each agent), Q_changes (maximal change between succesive Q-learning steps), state_history
     """
 
     n_agents = transition_kernel.n_agents
@@ -85,11 +85,13 @@ def evaluate_Qs_quantized(
         for i in range(n_agents)
     ]
     Q_changes = []  # history of the maximal (across agents) change in Qs at time t
+    state_history = []
 
     x_t = init_state
 
     # iterate over time in exploration phase k
     for t in trange(0, T, leave=False):
+        state_history.append(x_t)
 
         # choose actions
         # actual actions in original space
@@ -148,7 +150,7 @@ def evaluate_Qs_quantized(
         # update x_t
         x_t = next_state
 
-    return Qs, Q_changes
+    return Qs, Q_changes, state_history
 
 
 def quantized_q_learning_alg(
@@ -169,7 +171,7 @@ def quantized_q_learning_alg(
     Runs Quantized Continuous-Space Decentralized Multi-Agent Reinforcement Learning Algorithm.
 
     Args:
-    quantized_agent_policies (List[QuantizedPolicy]): Initial quantized policies.
+        quantized_agent_policies (List[QuantizedPolicy]): Initial quantized policies.
             Contain state and action quantizers.
         transition_kernel (TranstionKernel): The stochastic dynamic game's transition kernel.
             Contains state and action spaces.
@@ -215,6 +217,7 @@ def quantized_q_learning_alg(
     policy_history = []
     Qs_history = []
     is_BR_history = []
+    state_history = []
 
     # receive initial state
     x_0 = get_initial_state()
@@ -234,7 +237,7 @@ def quantized_q_learning_alg(
         )
 
         # evaluate current policies (stationary)
-        Qs, _ = evaluate_Qs_quantized(
+        Qs, _, exp_phase_state_history = evaluate_Qs_quantized(
             quantized_agent_policies,
             transition_kernel,
             x_t,
@@ -245,6 +248,7 @@ def quantized_q_learning_alg(
         )
 
         Qs_history.append(Qs)  # log current Q-factors
+        state_history.append(exp_phase_state_history)
 
         is_BR_k = []
         if verbose:
@@ -305,6 +309,7 @@ def quantized_q_learning_alg(
         "Qs_history": Qs_history,
         "policy_history": policy_history,
         "is_BR_history": is_BR_history,
+        'state_history': state_history,
         "n_exploration_phases": k,
     }
 
