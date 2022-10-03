@@ -1,6 +1,7 @@
-# Decentralized Multi-Agent Reinforcement Learning: Convergence to Team-Optimality
+# Decentralized Multi-Agent Reinforcement Learning for General (incl Continuous) State and Action Spaces
 
 
+[below needs updating]
 The repository includes the following:
 
 - `multi_agent_learning.py`: module implementing the multi-agent Q-learning algorithm.
