@@ -168,7 +168,7 @@ class QuantizedPolicy:
 
         # initialize with given policy (check it's valid)
         elif len(index_policy) == state_quantizer.n_bins and np.all(
-            0 <= np.array(index_policy) < action_quantizer.n_bins
+            (0 <= np.array(index_policy)) & (np.array(index_policy) < action_quantizer.n_bins)
         ):
             self.index_policy = tuple(index_policy)
 
